@@ -13,3 +13,4 @@ npm install
 
 then to run use
 nodemon or node app.js
+[![HitCount](http://hits.dwyl.io/VikasKad/nodebackend-boilterplate.svg)](http://hits.dwyl.io/VikasKad/nodebackend-boilterplate)
