@@ -1,31 +1,37 @@
 'use strict';
-const usersSchema = require('./../../models/users')
-exports.get = function (req, res) {
-    res.send('respond with a resource');
-    var newwallet = new usersSchema({
-       email:'vikas',
-       password:'test'
-    });
-    newwallet.save(function (err, output) {
-        if (err) {
-            res.send({
-                error: true,
-                message: "Database Issue"
-            });
-            console.log(err);
-            // res.send('res, commfun.ERR_MSG_CREATE');
-        } else {
-            res.send({
-                error: false,
-                message: "Record has been updated",
-                data: {
-                    index: index,
-                    publickey: address,
-                    privatekey: privateKey
-                }
-            });
-            // commfun.Errlog(res, commfun.SUCCESS_MSG_CREATE);
-        }
-    });
+const usersService = require('./users.service')
+const validator = require('validator');
+const bcrypt = require('bcrypt');
 
-}
+
+
+exports.get = ((req, res) => {
+    usersService.getAllUsers((returnData) => {
+        res.send(returnData);
+    })
+
+})
+exports.post = ((req, res) => {
+    if ((validator.isEmail(req.body.email)) && (req.body.password !== "") && (req.body.password !== undefined)) {
+        bcrypt.hash(req.body.password, 10, (err, hash) => {
+            if (err) {
+                console.log("cant has password");
+                return res.json({
+                    error: err,
+                    message: "Unable to hash"
+                });
+            } else {
+                usersService.post({
+                    email: req.body.email,
+                    password: hash
+                }, (returnData) => {
+                    res.send(returnData);
+                })
+            }
+        })
+    } else {
+        res.send({
+            send: false
+        });
+    }
+})
